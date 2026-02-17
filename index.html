@@ -15,11 +15,12 @@
             --border: #2e2e2e;
             --card: #141414;
             --card-hover: #1e1e1e;
+            --popout-bg: rgba(255, 215, 0, 0.22);
+            --popout-hover: rgba(255, 215, 0, 0.45);
+            --popout-text: #ffeb3b;
         }
 
-        * {
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; }
 
         body {
             margin: 0;
@@ -48,9 +49,7 @@
             box-shadow: 0 4px 20px rgba(0,0,0,0.6);
         }
 
-        button,
-        select,
-        input {
+        button, select, input {
             padding: 9px 14px;
             font-size: 15px;
             border-radius: 8px;
@@ -63,7 +62,6 @@
         }
 
         button:hover:not(:disabled) {
-            background: var(--accent);
             transform: translateY(-1px);
             box-shadow: 0 4px 12px var(--accent-glow);
         }
@@ -73,8 +71,24 @@
             cursor: not-allowed;
         }
 
-        select,
-        input[type="text"] {
+        #pop-out {
+            background: var(--popout-bg);
+            color: var(--popout-text);
+            border-color: rgba(255,215,0,0.35);
+            font-weight: 600;
+        }
+
+        #pop-out:hover {
+            background: var(--popout-hover);
+            box-shadow: 0 0 18px rgba(255,215,0,0.5);
+            transform: translateY(-1px);
+        }
+
+        #pop-out i {
+            margin-left: 6px;
+        }
+
+        select, input[type="text"] {
             min-width: 170px;
         }
 
@@ -224,14 +238,6 @@
             font-family: inherit;
         }
 
-        #pop-out {
-            background: #444;
-        }
-
-        #pop-out:hover {
-            background: #666;
-        }
-
         /* Focus styles for accessibility */
         button:focus-visible,
         select:focus-visible,
@@ -275,7 +281,9 @@
         </select>
         <input type="text" id="label-edit" placeholder="Rename current page..." style="display:none; width:210px;" aria-label="Edit page label">
 
-        <button id="pop-out" class="hidden" aria-label="Open current page in new tab">Pop Out <i class="fas fa-external-link-alt"></i></button>
+        <button id="pop-out" class="hidden" title="Open current content in a new tab (recommended for full experience)" aria-label="Open current page in a new tab">
+            Open Full Page <i class="fas fa-external-link-alt"></i>
+        </button>
     </div>
 
     <iframe id="page-frame" name="content_frame" title="Content Viewer"></iframe>
@@ -759,14 +767,15 @@
                 </div>
             </div>
         </details>
+
     </div>
 
     <!-- Fallback notice for blocked iframes -->
     <div id="fallback-notice" role="alertdialog" aria-modal="true" aria-labelledby="fallback-title">
         <div>
             <h2 id="fallback-title">This content cannot be embedded</h2>
-            <p>Many sites (especially live streams, Plex, Radio Garden, etc.) block embedding for security reasons.</p>
-            <p>You can still access it directly:</p>
+            <p>Many sites block embedding for security reasons.</p>
+            <p>Use the <strong style="color:#ffeb3b">Open Full Page</strong> button or click below:</p>
             <button onclick="openCurrentInTab()" aria-label="Open current page in new tab">Open in New Tab</button>
             <button onclick="document.getElementById('fallback-notice').style.display='none'" aria-label="Close this message">Close</button>
         </div>
@@ -774,7 +783,7 @@
 
     <script>
         // ────────────────────────────────────────────────
-        // Elements
+        // Core elements
         // ────────────────────────────────────────────────
         const iframe = document.getElementById('page-frame');
         const contentHub = document.getElementById('content-hub');
@@ -861,22 +870,19 @@
 
             labelEdit.style.display = 'none';
 
-            // Update stars
             document.querySelectorAll('.star').forEach(s => {
                 s.classList.toggle('active', favorites.has(s.dataset.url));
             });
 
-            // Update favorites grid
             const favGrid = document.getElementById('favorites-grid');
             favGrid.innerHTML = '';
-            [...favorites].sort().forEach(url => {
-                const div = document.createElement('div');
-                div.className = 'item';
-                div.role = 'listitem';
-                div.innerHTML = `
-                    <a href="${url}" target="content_frame" onclick="showIframe()" aria-label="Load ${getLabel(url)}">${getLabel(url)}</a>
+            favorites.forEach(url => {
+                const item = document.createElement('div');
+                item.className = 'item';
+                item.innerHTML = `
+                    <a href="${url}" target="content_frame" onclick="showIframe()">${getLabel(url)}</a>
                 `;
-                favGrid.appendChild(div);
+                favGrid.appendChild(item);
             });
             document.getElementById('favorites-section').style.display = favorites.size ? 'block' : 'none';
         }
@@ -887,7 +893,7 @@
         }
 
         // ────────────────────────────────────────────────
-        // Event Listeners - Navigation
+        // Navigation controls
         // ────────────────────────────────────────────────
         homeBtn.onclick = () => {
             navigateTo('https://www.liberty-express.org/');
@@ -923,10 +929,16 @@
             }
         };
 
-        popOutBtn.onclick = () => window.open(iframe.src, '_blank');
+        popOutBtn.onclick = () => {
+            if (iframe.src && iframe.src !== 'about:blank') {
+                window.open(iframe.src, '_blank', 'noopener,noreferrer');
+            } else {
+                alert('No page currently loaded to open.');
+            }
+        };
 
         // ────────────────────────────────────────────────
-        // Quick menu
+        // Quick section menu
         // ────────────────────────────────────────────────
         goBtn.onclick = () => {
             const v = pageMenu.value;
@@ -947,7 +959,7 @@
         // History jump
         // ────────────────────────────────────────────────
         historyMenu.onchange = e => {
-            const i = +e.target.value;
+            const i = parseInt(e.target.value);
             if (!isNaN(i) && i >= 0 && i < historyStack.length) {
                 currentIndex = i;
                 iframe.src = historyStack[i].url;
@@ -956,7 +968,7 @@
         };
 
         // ────────────────────────────────────────────────
-        // Label editing
+        // Edit label
         // ────────────────────────────────────────────────
         historyMenu.onfocus = () => {
             if (currentIndex >= 0 && historyStack[currentIndex]) {
@@ -984,7 +996,7 @@
         };
 
         // ────────────────────────────────────────────────
-        // Search
+        // Site search
         // ────────────────────────────────────────────────
         searchForm.onsubmit = e => {
             e.preventDefault();
@@ -996,80 +1008,59 @@
         };
 
         // ────────────────────────────────────────────────
-        // Favorites stars (click + keyboard)
+        // Favorites stars
         // ────────────────────────────────────────────────
         document.querySelectorAll('.star').forEach(star => {
-            const toggleFav = () => {
+            star.addEventListener('click', () => {
                 const url = star.dataset.url;
                 if (favorites.has(url)) {
                     favorites.delete(url);
+                    star.classList.remove('active');
                 } else {
                     favorites.add(url);
+                    star.classList.add('active');
                 }
                 localStorage.setItem('libertyFavorites', JSON.stringify([...favorites]));
                 updateUI();
-            };
-
-            star.onclick = toggleFav;
-
-            star.onkeydown = e => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    toggleFav();
-                }
-            };
+            });
         });
 
         // ────────────────────────────────────────────────
-        // Iframe load + error detection
+        // Iframe events
         // ────────────────────────────────────────────────
-        iframe.onload = () => {
+        iframe.addEventListener('load', () => {
             fallbackNotice.style.display = 'none';
             const newUrl = iframe.src;
             if (historyStack[currentIndex]?.url !== newUrl) {
-                navigateTo(newUrl);
+                const label = getLabel(newUrl);
+                historyStack = historyStack.slice(0, currentIndex + 1);
+                historyStack.push({url: newUrl, label});
+                currentIndex = historyStack.length - 1;
+                localStorage.setItem('libertyHistory', JSON.stringify(historyStack));
+                updateUI();
             }
-        };
+        });
 
-        iframe.onerror = () => {
+        iframe.addEventListener('error', () => {
             fallbackNotice.style.display = 'flex';
-        };
+        });
 
         // ────────────────────────────────────────────────
-        // Keyboard Shortcuts (global)
+        // Keyboard shortcuts
         // ────────────────────────────────────────────────
         document.addEventListener('keydown', e => {
-            // Only if not typing in input/select/textarea
-            if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA') {
-                return;
-            }
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA') return;
 
             if (e.altKey) {
                 switch (e.key.toLowerCase()) {
-                    case 'h':
-                        e.preventDefault();
-                        homeBtn.click();
-                        break;
-                    case 'arrowleft':
-                        e.preventDefault();
-                        backBtn.click();
-                        break;
-                    case 'arrowright':
-                        e.preventDefault();
-                        fwdBtn.click();
-                        break;
-                    case 'r':
-                        e.preventDefault();
-                        refreshBtn.click();
-                        break;
-                    case 'c':
-                        e.preventDefault();
-                        clearHistoryBtn.click();
-                        break;
+                    case 'h': e.preventDefault(); homeBtn.click(); break;
+                    case 'arrowleft': e.preventDefault(); backBtn.click(); break;
+                    case 'arrowright': e.preventDefault(); fwdBtn.click(); break;
+                    case 'r': e.preventDefault(); refreshBtn.click(); break;
+                    case 'c': e.preventDefault(); clearHistoryBtn.click(); break;
                 }
             }
 
-            // Esc → close fallback notice or go back to hub
             if (e.key === 'Escape') {
                 if (fallbackNotice.style.display === 'flex') {
                     fallbackNotice.style.display = 'none';
@@ -1077,17 +1068,13 @@
                     showHub();
                 }
             }
-
-            // F5 → refresh (native behavior already works)
         });
 
         // ────────────────────────────────────────────────
         // Initial setup
         // ────────────────────────────────────────────────
         updateUI();
-        if (historyStack.length > 1) {
-            showIframe();
-        }
+        if (historyStack.length > 1) showIframe();
     </script>
 </body>
 </html>
