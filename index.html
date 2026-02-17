@@ -1018,4 +1018,63 @@
                     star.classList.remove('active');
                 } else {
                     favorites.add(url);
-                    star.class
+                    star.classList.add('active');
+                }
+                localStorage.setItem('libertyFavorites', JSON.stringify([...favorites]));
+                updateUI();
+            });
+        });
+
+        // ────────────────────────────────────────────────
+        // Iframe events
+        // ────────────────────────────────────────────────
+        iframe.addEventListener('load', () => {
+            fallbackNotice.style.display = 'none';
+            const newUrl = iframe.src;
+            if (historyStack[currentIndex]?.url !== newUrl) {
+                const label = getLabel(newUrl);
+                historyStack = historyStack.slice(0, currentIndex + 1);
+                historyStack.push({url: newUrl, label});
+                currentIndex = historyStack.length - 1;
+                localStorage.setItem('libertyHistory', JSON.stringify(historyStack));
+                updateUI();
+            }
+        });
+
+        iframe.addEventListener('error', () => {
+            fallbackNotice.style.display = 'flex';
+        });
+
+        // ────────────────────────────────────────────────
+        // Keyboard shortcuts
+        // ────────────────────────────────────────────────
+        document.addEventListener('keydown', e => {
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA') return;
+
+            if (e.altKey) {
+                switch (e.key.toLowerCase()) {
+                    case 'h': e.preventDefault(); homeBtn.click(); break;
+                    case 'arrowleft': e.preventDefault(); backBtn.click(); break;
+                    case 'arrowright': e.preventDefault(); fwdBtn.click(); break;
+                    case 'r': e.preventDefault(); refreshBtn.click(); break;
+                    case 'c': e.preventDefault(); clearHistoryBtn.click(); break;
+                }
+            }
+
+            if (e.key === 'Escape') {
+                if (fallbackNotice.style.display === 'flex') {
+                    fallbackNotice.style.display = 'none';
+                } else if (iframe.style.display === 'block') {
+                    showHub();
+                }
+            }
+        });
+
+        // ────────────────────────────────────────────────
+        // Initial setup
+        // ────────────────────────────────────────────────
+        updateUI();
+        if (historyStack.length > 1) showIframe();
+    </script>
+</body>
+</html>
