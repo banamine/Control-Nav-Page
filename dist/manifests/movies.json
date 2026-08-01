@@ -2,7 +2,7 @@
   "manifestId": "movies-manifest",
   "category": "movies",
   "version": "1.0.0",
-  "lastUpdated": "2026-08-01T22:44:20.550Z",
+  "lastUpdated": "2026-08-01T23:48:55.495Z",
   "items": [
     {
       "id": "item-sample-movies",
@@ -10,7 +10,7 @@
       "title": "Sample MOVIES Page",
       "domain": "movies",
       "type": "movies",
-      "lastModified": "2026-08-01T22:44:20.550Z",
+      "lastModified": "2026-08-01T23:48:55.495Z",
       "checksum": "34a274f3b5b71d0b5d218b85da6d33bd622e75de61342941885bbd8eabcc8fb5"
     }
   ]
