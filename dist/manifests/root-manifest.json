@@ -1,0 +1,32 @@
+{
+  "version": "1.0.0",
+  "title": "Liberty Express Master Manifest",
+  "lastUpdated": "2026-08-01T09:49:53.733Z",
+  "sources": [
+    {
+      "id": "news-manifest",
+      "subManifestUrl": "https://www.liberty-express.org/manifests/news.json",
+      "category": "news"
+    },
+    {
+      "id": "movies-manifest",
+      "subManifestUrl": "https://www.liberty-express.org/manifests/movies.json",
+      "category": "movies"
+    },
+    {
+      "id": "series-manifest",
+      "subManifestUrl": "https://www.liberty-express.org/manifests/series.json",
+      "category": "series"
+    },
+    {
+      "id": "radio-manifest",
+      "subManifestUrl": "https://www.liberty-express.org/manifests/radio.json",
+      "category": "radio"
+    },
+    {
+      "id": "general-manifest",
+      "subManifestUrl": "https://www.liberty-express.org/manifests/general.json",
+      "category": "general"
+    }
+  ]
+}

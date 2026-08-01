@@ -1,0 +1,17 @@
+{
+  "manifestId": "radio-manifest",
+  "category": "radio",
+  "version": "1.0.0",
+  "lastUpdated": "2026-08-01T09:49:53.732Z",
+  "items": [
+    {
+      "id": "item-sample-radio",
+      "url": "https://www.liberty-express.org/sample.html",
+      "title": "Sample RADIO Page",
+      "domain": "radio",
+      "type": "radio",
+      "lastModified": "2026-08-01T09:49:53.732Z",
+      "checksum": "34a274f3b5b71d0b5d218b85da6d33bd622e75de61342941885bbd8eabcc8fb5"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "manifestId": "news-manifest",
+  "category": "news",
+  "version": "1.0.0",
+  "lastUpdated": "2026-08-01T09:49:53.731Z",
+  "items": [
+    {
+      "id": "item-sample-news",
+      "url": "https://www.liberty-express.org/sample.html",
+      "title": "Sample NEWS Page",
+      "domain": "news",
+      "type": "news",
+      "lastModified": "2026-08-01T09:49:53.731Z",
+      "checksum": "34a274f3b5b71d0b5d218b85da6d33bd622e75de61342941885bbd8eabcc8fb5"
+    }
+  ]
+}
