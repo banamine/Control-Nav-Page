@@ -2,7 +2,7 @@
   "manifestId": "series-manifest",
   "category": "series",
   "version": "1.0.0",
-  "lastUpdated": "2026-08-23T05:20:42.335Z",
+  "lastUpdated": "2026-08-23T06:23:54.099Z",
   "items": [
     {
       "id": "item-sample-series",
@@ -10,7 +10,7 @@
       "title": "Sample SERIES Page",
       "domain": "series",
       "type": "series",
-      "lastModified": "2026-08-23T05:20:42.335Z",
+      "lastModified": "2026-08-23T06:23:54.099Z",
       "checksum": "34a274f3b5b71d0b5d218b85da6d33bd622e75de61342941885bbd8eabcc8fb5"
     }
   ]
