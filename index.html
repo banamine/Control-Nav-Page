@@ -922,24 +922,91 @@ hub.appendChild(details);
 // ----- KEYBOARD & HISTORY -----
 const history = [];
 let historyIndex = -1;
+const urlToItemMap = new Map(); // Map URLs to their titles
 
-document.getElementById('home-btn').addEventListener('click', () => location.hash = '#');
+// Build URL map for quick lookup
+for (const item of catalog.items) {
+urlToItemMap.set(item.url, item.title);
+}
+
+function updateNavButtons() {
+const backBtn = document.getElementById('back-btn');
+const fwdBtn = document.getElementById('fwd-btn');
+backBtn.disabled = historyIndex <= 0;
+fwdBtn.disabled = historyIndex >= history.length - 1;
+}
+
+function addToPageMenu(url, title) {
+const pageMenu = document.getElementById('page-menu');
+const option = document.createElement('option');
+option.value = url;
+option.textContent = `🎯 ${title}`;
+pageMenu.appendChild(option);
+}
+
+function populateHistoryMenu() {
+const historyMenu = document.getElementById('history-menu');
+historyMenu.innerHTML = '<option value="">🕒 History...</option>';
+if (history.length === 0) return;
+
+for (let i = history.length - 1; i >= 0; i--) {
+const title = urlToItemMap.get(history[i]) || `Page ${i + 1}`;
+const option = document.createElement('option');
+option.value = history[i];
+option.textContent = title;
+historyMenu.appendChild(option);
+}
+}
+
+document.getElementById('home-btn').addEventListener('click', () => {
+document.getElementById('page-frame').style.display = 'none';
+document.getElementById('content-hub').style.display = 'block';
+document.getElementById('pop-out').classList.add('hidden');
+});
+
 document.getElementById('back-btn').addEventListener('click', () => {
 if (historyIndex > 0) {
 historyIndex--;
 loadURL(history[historyIndex], false);
 }
 });
+
 document.getElementById('fwd-btn').addEventListener('click', () => {
 if (historyIndex < history.length - 1) {
 historyIndex++;
 loadURL(history[historyIndex], false);
 }
 });
-document.getElementById('refresh-btn').addEventListener('click', () => location.reload());
+
+document.getElementById('refresh-btn').addEventListener('click', () => {
+if (historyIndex >= 0) {
+document.getElementById('page-frame').src = history[historyIndex];
+}
+});
+
+document.getElementById('clear-history-btn').addEventListener('click', () => {
+history.length = 0;
+historyIndex = -1;
+document.getElementById('page-frame').style.display = 'none';
+document.getElementById('content-hub').style.display = 'block';
+updateNavButtons();
+populateHistoryMenu();
+});
+
 document.getElementById('go-btn').addEventListener('click', () => {
 const val = document.getElementById('page-menu').value;
-if (val) loadURL(catalog.items.find(i => i.url.includes(val))?.url || '');
+if (val) loadURL(val);
+});
+
+document.getElementById('history-menu').addEventListener('change', (e) => {
+if (e.target.value) {
+const idx = history.indexOf(e.target.value);
+if (idx >= 0) {
+historyIndex = idx;
+loadURL(history[historyIndex], false);
+}
+e.target.value = '';
+}
 });
 
 document.getElementById('search-input').addEventListener('input', (e) => {
@@ -970,6 +1037,7 @@ if (e.key === 'c') document.getElementById('clear-history-btn').click();
 });
 
 function loadURL(url, addToHistory = true) {
+if (!url) return;
 document.getElementById('page-frame').src = url;
 document.getElementById('page-frame').style.display = 'block';
 document.getElementById('content-hub').style.display = 'none';
@@ -979,10 +1047,11 @@ if (addToHistory) {
 history.splice(historyIndex + 1);
 history.push(url);
 historyIndex = history.length - 1;
+populateHistoryMenu();
+addToPageMenu(url, urlToItemMap.get(url) || 'Loaded Page');
 }
 
-document.getElementById('back-btn').disabled = historyIndex <= 0;
-document.getElementById('fwd-btn').disabled = historyIndex >= history.length - 1;
+updateNavButtons();
 }
 
 function openCurrentInTab() {
@@ -1038,12 +1107,19 @@ favGrid.appendChild(item);
 }
 
 updateFavSection();
-document.querySelectorAll('.item').forEach(item => {
-const url = item.querySelector('a').onclick.toString().match(/'([^']+)'/)[1];
-if (favorites.some(f => f.url === url)) {
-item.querySelector('.star').classList.add('active');
+
+// Mark favorite items with stars
+const markFavorites = () => {
+document.querySelectorAll('.item:not(.active) .star').forEach(star => {
+const itemText = star.closest('.item').querySelector('a').textContent;
+const itemUrl = catalog.items.find(i => i.title === itemText)?.url;
+if (itemUrl && favorites.some(f => f.url === itemUrl)) {
+star.classList.add('active');
 }
 });
+};
+
+setTimeout(markFavorites, 100);
 </script>
 </body>
 </html>
