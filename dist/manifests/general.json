@@ -2,7 +2,7 @@
   "manifestId": "general-manifest",
   "category": "general",
   "version": "1.0.0",
-  "lastUpdated": "2026-09-13T07:47:11.870Z",
+  "lastUpdated": "2026-09-13T12:56:41.199Z",
   "items": [
     {
       "id": "item-sample-general",
@@ -10,7 +10,7 @@
       "title": "Sample GENERAL Page",
       "domain": "general",
       "type": "general",
-      "lastModified": "2026-09-13T07:47:11.870Z",
+      "lastModified": "2026-09-13T12:56:41.199Z",
       "checksum": "34a274f3b5b71d0b5d218b85da6d33bd622e75de61342941885bbd8eabcc8fb5"
     }
   ]
