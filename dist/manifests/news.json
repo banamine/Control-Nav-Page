@@ -2,7 +2,7 @@
   "manifestId": "news-manifest",
   "category": "news",
   "version": "1.0.0",
-  "lastUpdated": "2026-09-24T13:11:05.886Z",
+  "lastUpdated": "2026-09-24T18:04:09.904Z",
   "items": [
     {
       "id": "item-sample-news",
@@ -10,7 +10,7 @@
       "title": "Sample NEWS Page",
       "domain": "news",
       "type": "news",
-      "lastModified": "2026-09-24T13:11:05.885Z",
+      "lastModified": "2026-09-24T18:04:09.903Z",
       "checksum": "34a274f3b5b71d0b5d218b85da6d33bd622e75de61342941885bbd8eabcc8fb5"
     }
   ]
