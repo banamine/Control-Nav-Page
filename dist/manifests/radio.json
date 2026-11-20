@@ -2,7 +2,7 @@
   "manifestId": "radio-manifest",
   "category": "radio",
   "version": "1.0.0",
-  "lastUpdated": "2026-11-20T01:31:44.723Z",
+  "lastUpdated": "2026-11-20T09:25:37.873Z",
   "items": [
     {
       "id": "item-sample-radio",
@@ -10,7 +10,7 @@
       "title": "Sample RADIO Page",
       "domain": "radio",
       "type": "radio",
-      "lastModified": "2026-11-20T01:31:44.723Z",
+      "lastModified": "2026-11-20T09:25:37.873Z",
       "checksum": "34a274f3b5b71d0b5d218b85da6d33bd622e75de61342941885bbd8eabcc8fb5"
     }
   ]
